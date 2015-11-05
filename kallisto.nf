@@ -176,12 +176,6 @@ process sleuth {
  
     """
     #!/usr/bin/env /nfs/users/cn/efloden/R-3.2.2/bin/Rscript
-
-    #source("http://bioconductor.org/biocLite.R")
-    #biocLite("rhdf5")
-    #install.packages("devtools", repos="http://cran.rstudio.com/")
-    #devtools::install_github("pachterlab/sleuth")
-
     library("sleuth")
 
     sample_id <- dir(file.path("$baseDir","results", "kallisto"))
