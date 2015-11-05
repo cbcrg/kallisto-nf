@@ -43,7 +43,7 @@ Pipeline parameters
 * Specifies the location of the primary reads *fastq* file.
 * Multiple files can be specified using the usual wildcards (*, ?), in this case make sure to surround the parameter string
   value by single quote characters (see the example below)
-* It must end in '_1.fastq'.
+* It must end in 'fastq'.
 * Involved in the task: rna-pipeline.
   * By default is set to the Kallisto-NF's location: './tutorial/data/test_1.fastq' 
   `  $ nextflow run cbcrg/kallisto-nf --primary '/home/dataset/*_1.fastq'`
@@ -119,7 +119,7 @@ Dependencies
 ------------
 
  * Java 7+ 
- * Kaliisto - http://pachterlab.github.io/kallisto/
+ * Kallisto - http://pachterlab.github.io/kallisto/
  * Sleuth- http://pachterlab.github.io/sleuth/
  * R - https://www.r-project.org/
  
