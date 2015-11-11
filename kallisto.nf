@@ -17,8 +17,6 @@
  *   along with Kallisto-NF.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.apache.commons.lang.StringUtils
-
 /* 
  * Main Kallisto-NF pipeline script
  *
@@ -33,20 +31,17 @@ params.name          = "Expression Analysis"
 params.primary       = "$baseDir/tutorial/reads/*.fastq"
 params.secondary     = null
 params.exp           = "$baseDir/tutorial/experiment/hiseq_info.txt"
-params.db            = "db/"
 params.mapper        = "kallisto"
-params.cpus          = 1
 params.output        = "results/"
 
 
-log.info "K A L L I S T O - N F  ~  version 0.1"
-log.info "================================="
+log.info "K A L L I S T O - N F  ~  version 0.2"
+log.info "====================================="
 log.info "name                   : ${params.name}"
 log.info "transcriptome          : ${params.transcriptome}"
 log.info "primary                : ${params.primary}"
 log.info "secondary              : ${params.secondary}"
 log.info "experimental design    : ${params.exp}"
-log.info "database path          : ${params.db}"
 log.info "output                 : ${params.output}"
 log.info "mapper                 : ${params.mapper}"
 log.info "\n"
@@ -61,16 +56,10 @@ if( !(params.mapper in ['kallisto'])) { exit 1, "Invalid mapper tool: '${params.
 transcriptome_file     = file(params.transcriptome)
 primary_reads          = files(params.primary).sort()
 
-if (params.secondary != null) {
-    secondary_reads  = files(params.secondary).sort()
-}
-else {
-    secondary_reads = []
-}  
+secondary_reads = params.secondary ?  files(params.secondary).sort() :  []
 
 exp_file               = file(params.exp) 
 result_path            = file(params.output)
-dbPath                 = file(params.db)
 
 /*
  * validate input files
@@ -78,10 +67,6 @@ dbPath                 = file(params.db)
 if( !transcriptome_file.exists() ) exit 1, "Missing transcriptome file: ${transcriptome_file}"
 
 if( !exp_file.exists() ) exit 1, "Missing experimental design file: ${exp_file}"
-
-if( !result_path.exists() && !result_path.mkdirs() ) {
-    exit 3, "Cannot create output folder: $result_path -- Check file system access permission"
-}
 
 read_names = []
 for( file in primary_reads ) {
@@ -98,8 +83,6 @@ if (secondary_reads.size() != 0) {
 }
 
 process index {
-    
-    storeDir { dbPath }
 
     input:
     file transcriptome_file
@@ -120,19 +103,15 @@ process index {
 
 
 process mapping {
-    scratch false
+    publishDir result_path
 
-    storeDir { dbPath }
-    
     input:
     file transcriptome_index from transcriptome_index.first()
     file primary_reads
     val read_names
 
     output:
-    file "kallisto/${read_names}/abundance.h5" into kallisto_h5
-    file "kallisto/${read_names}/abundance.tsv" into kallisto_tsv
-    file "kallisto/${read_names}/run_info.json" into kallisto_run_info   
+    file "kallisto_${read_names}" into kallisto_out  
 
     script:
     //
@@ -141,13 +120,7 @@ process mapping {
 
     if( params.mapper == 'kallisto' &&  secondary_reads.size() == 0) {
         """
-        test -d "kallisto/" || mkdir -p "kallisto/"
- 
-        test -d "${result_path}/kallisto/" || mkdir -p "${result_path}/kallisto/"
- 
-        kallisto quant --single -l 180 -s 20 -b 100 -t 8 -i ${transcriptome_index} -o kallisto/${read_names} ${primary_reads} 
-
-        cp -r kallisto/${read_names} "${result_path}/kallisto/." 
+        kallisto quant --single -l 180 -s 20 -b 100 -t 8 -i ${transcriptome_index} -o kallisto_${read_names} ${primary_reads} 
         """
     }  
     else {
@@ -160,11 +133,14 @@ process mapping {
 
 
 process sleuth {
+    publishDir result_path
  
     input:
-    file 'h5_*' from kallisto_h5.toList()
-    file 'tsv_*' from kallisto_tsv.toList()
-    file 'run_info_*' from kallisto_run_info.toList()
+    file all_files from kallisto_out.toList()
+    file 'hiseq_info.txt' from exp_file
+
+    output: 
+    file 'sleuth_object.so'
 
     script:
     //
@@ -172,93 +148,15 @@ process sleuth {
     //
  
     """
-    #!/usr/bin/env /nfs/users/cn/efloden/R-3.2.2/bin/Rscript
-    library("sleuth")
-
-    sample_id <- dir(file.path("$baseDir","results", "kallisto"))
-    sample_id
-
-    kal_dirs <- sapply(sample_id, function(id) file.path("$baseDir", "results", "kallisto", id))
-    kal_dirs
- 
-    s2c <- read.table(file.path("${exp_file}"), header = TRUE, stringsAsFactors=FALSE)
-    s2c <- dplyr::select(s2c, sample = run_accession, condition)
-    s2c <- dplyr::mutate(s2c, path = kal_dirs)
-
-    mart <- biomaRt::useMart(biomart = "ENSEMBL_MART_ENSEMBL", dataset = "hsapiens_gene_ensembl", host="www.ensembl.org")
-
-    t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id", "external_gene_name"), mart = mart)
-    t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id, ens_gene = ensembl_gene_id, ext_gene = external_gene_name)
-
-    so <- sleuth_prep(s2c, ~ condition, target_mapping = t2g)
-    so <- sleuth_fit(so)
-    
-    so <- sleuth_wt(so, 'conditionscramble')
-
-    save(so, file="${result_path}/sleuth_object.so")
+    mkdir kallisto
+    mv $all_files kallisto 
+    sleuth.R kallisto hiseq_info.txt
     """
 }
 
 
 // ===================== UTILITY FUNCTIONS ============================
 
-
-/*
- * Given a path returns a sorted list files matching it.
- * The path can contains wildcards characters '*' and '?'
- */
-def List<Path> findReads( String fileName ) {
-    def result = []
-    if( fileName.contains('*') || fileName.contains('?') ) {
-        def path = file(fileName)
-        def parent = path.parent
-        def filePattern = path.getName().replace("?", ".?").replace("*", ".*")
-        parent.eachFileMatch(~/$filePattern/) { result << it }
-        result = result.sort()
-    }
-    else {
-        result << file(fileName)
-    }
-
-    return result
-}
-
-def bestMatch( Path file1, Path file2, boolean singlePair = true, boolean pairedEnd = false) {
-    bestMatch( file1.baseName, file2.baseName, singlePair, pairedEnd)
-}
-
-def bestMatch( String n1, String n2, boolean singlePair = true, boolean pairedEnd = false) {
-
-    def index = StringUtils.indexOfDifference(n1, n2)
-
-    if (!pairedEnd) {
-        String match = n1
-        match = trimReadName(match)
-        return [match, null]
-    }
-
-  
-    else {
-        if( !singlePair ) {
-            if( index == -1 ) {
-                // this mean the two file names are identical, something is wrong
-                return [null, "Missing entry for read pair: '$n1'"]
-            }
-            else if( index == 0 ) {
-                // this mean the two file names are completely different
-                return [null, "Not a valid read pair -- primary: $n1 ~ secondary: $n2"]
-            }
-        }
-
-        String match = index ? n1.subSequence(0,index) : n1
-        match = trimReadName(match)
-        if( !match ) {
-            return [null, "Missing common name for read pair -- primary: $n1 ~ secondary: $n2 "]
-        }
-
-        return [match, null]
-    }
-}
 
 def trimReadName( Path file1 ) {
     trimReadName( file1.baseName ) 
@@ -270,24 +168,6 @@ def trimReadName( String name ) {
 
 // ===================== UNIT TESTS ============================
 
-def testFindReads() {
-
-    def path = File.createTempDir().toPath()
-    try {
-        def file1 = path.resolve('alpha_1.fastq'); file1.text = 'file1'
-        def file2 = path.resolve('alpha_2.fastq'); file2.text = 'file2'
-        def file3 = path.resolve('gamma_1.fastq'); file3.text = 'file3'
-        def file4 = path.resolve('gamma_2.fastq'); file4.text = 'file4'
-
-        assert files("$path/alpha_1.fastq") == [file1]
-        assert files("$path/*_1.fastq") == [file1, file3]
-        assert files("$path/*_2.fastq") == [file2, file4]
-    }
-    finally {
-        path.deleteDir()
-    }
-
-}
 
 def testTrimReadName() {
     assert trimReadName('abc') == 'abc'
@@ -295,13 +175,4 @@ def testTrimReadName() {
     assert trimReadName('__a_b_c__') == 'a_b_c'
 }
 
-def testBestMach() {
 
-    assert bestMatch('abc_1', 'abc_2') == ['abc', null]
-    assert bestMatch('aaa', 'bbb') == ['aaa', null]
-    assert bestMatch('_', 'bbb') == [null, "Missing common name for read pair -- primary: _ ~ secondary: bbb "]
-
-    assert bestMatch('abc_1', 'abc_2', false) == ['abc', null]
-    assert bestMatch('aaa', 'bbb', false) == [null, 'Not a valid read pair -- primary: aaa ~ secondary: bbb' ]
-
-}

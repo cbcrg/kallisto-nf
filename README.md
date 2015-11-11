@@ -62,13 +62,6 @@ Pipeline parameters
 **--exp**
 * Specifies the location of the experimental design file
 
-**--cpus** 
-   
-* Sets the number of CPUs used in every tasks (default 1).  
-* Involved in the task of kallisto bootstraps
-  * By default is set to the number of the available cores.  
-  `  $ nextflow run cbcrg/kallisto-nf --cpus 10  `
-  
   
 **--output** 
    
