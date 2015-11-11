@@ -145,7 +145,7 @@ process mapping {
  
         test -d "${result_path}/kallisto/" || mkdir -p "${result_path}/kallisto/"
  
-        kallisto quant --single -l 200 -s 3 -b 100 -t 8 -i ${transcriptome_index} -o kallisto/${read_names} ${primary_reads} 
+        kallisto quant --single -l 180 -s 20 -b 100 -t 8 -i ${transcriptome_index} -o kallisto/${read_names} ${primary_reads} 
 
         cp -r kallisto/${read_names} "${result_path}/kallisto/." 
         """
@@ -161,13 +161,10 @@ process mapping {
 
 process sleuth {
  
-    executor='local'   
-
     input:
     file 'h5_*' from kallisto_h5.toList()
     file 'tsv_*' from kallisto_tsv.toList()
     file 'run_info_*' from kallisto_run_info.toList()
-
 
     script:
     //
@@ -182,23 +179,26 @@ process sleuth {
     sample_id
 
     kal_dirs <- sapply(sample_id, function(id) file.path("$baseDir", "results", "kallisto", id))
-
-    s2c <- read.table(file.path("$baseDir","data", "experiments", "hiseq_info.txt"), header = TRUE, stringsAsFactors=FALSE)
+    kal_dirs
+ 
+    s2c <- read.table(file.path("${exp_file}"), header = TRUE, stringsAsFactors=FALSE)
     s2c <- dplyr::select(s2c, sample = run_accession, condition)
     s2c <- dplyr::mutate(s2c, path = kal_dirs)
 
-    mart <- biomaRt::useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+    mart <- biomaRt::useMart(biomart = "ENSEMBL_MART_ENSEMBL", dataset = "hsapiens_gene_ensembl", host="www.ensembl.org")
 
     t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id", "external_gene_name"), mart = mart)
     t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id, ens_gene = ensembl_gene_id, ext_gene = external_gene_name)
 
     so <- sleuth_prep(s2c, ~ condition, target_mapping = t2g)
     so <- sleuth_fit(so)
+    
     so <- sleuth_wt(so, 'conditionscramble')
 
-    sleuth_live(so)
+    save(so, file="${result_path}/sleuth_object.so")
     """
 }
+
 
 // ===================== UTILITY FUNCTIONS ============================
 
