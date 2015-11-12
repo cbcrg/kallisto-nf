@@ -1,7 +1,7 @@
 Kallisto-NF
 ========
 
-A nextflow implementation of Kallisto & Slueth RNA-Seq Tools
+A nextflow implementation of Kallisto & Sleuth RNA-Seq Tools
 
 
 
@@ -31,21 +31,21 @@ Pipeline parameters
 
 **--transcriptome**  
    
-* The location of the genome multi-fasta file. 
+* The location of the transcriptome multi-fasta file. 
 * It should end in '.fa' 
-* Involved in the task: index.
+* Involved in the task: kallisto-index.
   * By default is set to the Kallisto-NF's localization: './tutorial/data/transcriptome/trascriptome.fa'
-  `  $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_fastas/example.fa  `
+  `  $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa  `
     
   
 **--primary** 
    
-* Specifies the location of the primary reads *fastq* file.
+* Specifies the location of the primary reads *fastq* file(s).
 * Multiple files can be specified using the usual wildcards (*, ?), in this case make sure to surround the parameter string
   value by single quote characters (see the example below)
 * It must end in 'fastq'.
-* Involved in the task: rna-pipeline.
-  * By default is set to the Kallisto-NF's location: './tutorial/data/test_1.fastq' 
+* Involved in the task: kallisto-mapping.
+  * By default is set to the Kallisto-NF's location: './tutorial/data/*.fastq' 
   `  $ nextflow run cbcrg/kallisto-nf --primary '/home/dataset/*_1.fastq'`
   
   
@@ -55,21 +55,49 @@ Pipeline parameters
 * Multiple files can be specified using the usual wildcards (*, ?), in this case make sure to surround the parameter string
    value by single quote characters (see the example below)
 * It must end in '_2.fastq'.  
-* Involved in the task: rna-pipeline.  
+* Involved in the task: kallisto-mapping.  
   * By default is set to the Kallisto-NF's location: './tutorial/data/test_2.fastq' 
   `  $ nextflow run cbcrg/kallisto-nf --secondary '/home/dataset/*_2.fastq'`
 
-**--exp**
-* Specifies the location of the experimental design file
 
-  
+**--fragment_len**
+* Specifies the average fragment length of the RNA-Seq library.
+* This is required for mapping single-ended reads.
+* Involved in the task: kallisto-mapping.
+   * By default is set 180. 
+  `  $ nextflow run cbcrg/kallisto-nf --fragment_len 180`
+
+
+**--fragment_sd**
+* Specifies the standard deviation of the fragment length in the RNA-Seq library.
+* This is required for mapping single-ended reads.
+* Involved in the task: kallisto-mapping.
+   * By default this is set 20.  
+  `  $ nextflow run cbcrg/kallisto-nf --fragment_sd 180`
+
+
+**--bootstrap**
+* Specifies the number of bootstrap samples for quantification of abundances.
+* Involved in the task: kallisto-mapping.
+   * By default this is set 100. 
+  `  $ nextflow run cbcrg/kallisto-nf --bootstrap 100`
+
+
+**--experiment**
+* Specifies the location of the experimental design file. 
+* The experimental design file provides Seulth with a link between the samples and the conditions for abundance testing. 
+  * By default is set to the Kallisto-NF's location: './tutorial/experiment/high_seqinfo.txt'
+  `  $ nextflow run cbcrg/kallisto-nf --experiment '/home/experiment/exp_design.txt'`
+
+
 **--output** 
    
 * Specifies the folder where the results will be stored for the user.  
 * It does not matter if the folder does not exist.
-  * By default is set to Grape-NF's folder: './results' 
+  * By default is set to Kallisto-NF's folder: './results' 
   `  $ nextflow run cbcrg/kallisto-nf --output /home/user/my_results  `
   
+
 
 Cluster support
 ---------------
@@ -113,6 +141,6 @@ Dependencies
 
  * Java 7+ 
  * Kallisto - http://pachterlab.github.io/kallisto/
- * Sleuth- http://pachterlab.github.io/sleuth/
+ * Sleuth - http://pachterlab.github.io/sleuth/
  * R - https://www.r-project.org/
  

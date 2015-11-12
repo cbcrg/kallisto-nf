@@ -26,11 +26,14 @@
  */
 
 
-params.transcriptome = "$baseDir/tutorial/transcriptome/Homo_sapiens.GRCh38.rel79.cdna.part.fa"
-params.name          = "Expression Analysis"
+params.transcriptome = "$baseDir/tutorial/transcriptome/transcriptome.fa"
+params.name          = "RNA-Seq Abundance Analysis"
 params.primary       = "$baseDir/tutorial/reads/*.fastq"
 params.secondary     = null
-params.exp           = "$baseDir/tutorial/experiment/hiseq_info.txt"
+params.fragment_len  = '180'
+params.fragment_sd   = '20'
+params.bootstrap     = '100'
+params.experiment    = "$baseDir/tutorial/experiment/hiseq_info.txt"
 params.mapper        = "kallisto"
 params.output        = "results/"
 
@@ -41,7 +44,10 @@ log.info "name                   : ${params.name}"
 log.info "transcriptome          : ${params.transcriptome}"
 log.info "primary                : ${params.primary}"
 log.info "secondary              : ${params.secondary}"
-log.info "experimental design    : ${params.exp}"
+log.info "fragment length        : ${params.fragment_len} nt"
+log.info "fragment SD            : ${params.fragment_sd} nt"
+log.info "bootstraps             : ${params.bootstrap}"
+log.info "experimental design    : ${params.experiment}"
 log.info "output                 : ${params.output}"
 log.info "mapper                 : ${params.mapper}"
 log.info "\n"
@@ -55,10 +61,8 @@ if( !(params.mapper in ['kallisto'])) { exit 1, "Invalid mapper tool: '${params.
 
 transcriptome_file     = file(params.transcriptome)
 primary_reads          = files(params.primary).sort()
-
 secondary_reads = params.secondary ?  files(params.secondary).sort() :  []
-
-exp_file               = file(params.exp) 
+exp_file               = file(params.experiment) 
 result_path            = file(params.output)
 
 /*
@@ -120,7 +124,7 @@ process mapping {
 
     if( params.mapper == 'kallisto' &&  secondary_reads.size() == 0) {
         """
-        kallisto quant --single -l 180 -s 20 -b 100 -t 8 -i ${transcriptome_index} -o kallisto_${read_names} ${primary_reads} 
+        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -t 8 -i ${transcriptome_index} -o kallisto_${read_names} ${primary_reads} 
         """
     }  
     else {
