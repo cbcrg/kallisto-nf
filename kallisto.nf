@@ -28,28 +28,24 @@
 
 params.transcriptome = "$baseDir/tutorial/transcriptome/transcriptome.fa"
 params.name          = "RNA-Seq Abundance Analysis"
-params.primary       = "$baseDir/tutorial/reads/*.fastq"
-params.secondary     = null
+params.reads         = "$baseDir/tutorial/reads/*.fastq"
 params.fragment_len  = '180'
 params.fragment_sd   = '20'
 params.bootstrap     = '100'
 params.experiment    = "$baseDir/tutorial/experiment/hiseq_info.txt"
-params.mapper        = "kallisto"
 params.output        = "results/"
 
 
-log.info "K A L L I S T O - N F  ~  version 0.2"
+log.info "K A L L I S T O - N F  ~  version 0.3"
 log.info "====================================="
 log.info "name                   : ${params.name}"
+log.info "reads                  : ${params.reads}"
 log.info "transcriptome          : ${params.transcriptome}"
-log.info "primary                : ${params.primary}"
-log.info "secondary              : ${params.secondary}"
 log.info "fragment length        : ${params.fragment_len} nt"
 log.info "fragment SD            : ${params.fragment_sd} nt"
 log.info "bootstraps             : ${params.bootstrap}"
 log.info "experimental design    : ${params.experiment}"
 log.info "output                 : ${params.output}"
-log.info "mapper                 : ${params.mapper}"
 log.info "\n"
 
 
@@ -57,11 +53,7 @@ log.info "\n"
  * Input parameters validation
  */
 
-if( !(params.mapper in ['kallisto'])) { exit 1, "Invalid mapper tool: '${params.mapper}'" }
-
 transcriptome_file     = file(params.transcriptome)
-primary_reads          = files(params.primary).sort()
-secondary_reads = params.secondary ?  files(params.secondary).sort() :  []
 exp_file               = file(params.experiment) 
 result_path            = file(params.output)
 
@@ -72,19 +64,26 @@ if( !transcriptome_file.exists() ) exit 1, "Missing transcriptome file: ${transc
 
 if( !exp_file.exists() ) exit 1, "Missing experimental design file: ${exp_file}"
 
-read_names = []
-for( file in primary_reads ) {
-    String name = trimReadName(file)
-    read_names << name
-}
-read_names.sort()
+/*
+ * Create a channel for read files 
+ */
+ 
+single = null   
 
+Channel
+    .fromPath( params.reads )
+    .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
+    .map { path -> 
+       def prefix = readPrefix(path, params.reads)
+       tuple(prefix, path) 
+    }
+    .groupTuple(sort: true)
+    .map { id, files -> 
+        single = files.size()==1
+        tuple(id, files)
+    }
+    .set { read_files } 
 
-log.info "Read pairs: $read_names"
-log.debug "Primary reads: ${primary_reads *. name }"
-if (secondary_reads.size() != 0) {
-  log.debug "Secondary reads: ${secondary_reads *. name }"
-}
 
 process index {
 
@@ -98,38 +97,35 @@ process index {
     //
     // Kallisto tools mapper index
     //
-    if( params.mapper=='kallisto' )
-        """
-        kallisto index -i transcriptome.index ${transcriptome_file}
-        """
-
+    """
+    kallisto index -i transcriptome.index ${transcriptome_file}
+    """
 }
 
 
 process mapping {
+    tag "reads: $name"
     publishDir result_path
 
     input:
     file transcriptome_index from transcriptome_index.first()
-    file primary_reads
-    val read_names
+    set val(name), file(reads:'*') from read_files
 
     output:
-    file "kallisto_${read_names}" into kallisto_out  
+    file "kallisto_${name}" into kallisto_out  
 
     script:
     //
     // Kallisto tools mapper
     //
-
-    if( params.mapper == 'kallisto' &&  secondary_reads.size() == 0) {
+    if( single ) {
         """
-        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -t 8 -i ${transcriptome_index} -o kallisto_${read_names} ${primary_reads} 
+        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -t 8 -i ${transcriptome_index} -o kallisto_${name} ${reads} 
         """
     }  
     else {
         """
-        kallisto quant -i transcriptome.index -o ${read_names} ${primary_reads} ${secondary_reads}
+        kallisto quant -i transcriptome.index -o kallisto_${name} ${reads} 
         """
     }
 
@@ -162,21 +158,47 @@ process sleuth {
 // ===================== UTILITY FUNCTIONS ============================
 
 
-def trimReadName( Path file1 ) {
-    trimReadName( file1.baseName ) 
-}
-def trimReadName( String name ) {
-    name.replaceAll(/^[^a-zA-Z0-9]*/,'').replaceAll(/[^a-zA-Z0-9]*$/,'')
-}
+/* 
+ * Helper function, given a file Path 
+ * returns the file name region matching a specified glob pattern
+ * starting from the beginning of the name up to last matching group.
+ * 
+ * For example: 
+ *   readPrefix('/some/data/file_alpha_1.fa', 'file*_1.fa' )
+ * 
+ * Returns: 
+ *   'file_alpha'
+ */
+ 
+def readPrefix( Path actual, template ) {
 
+    final fileName = actual.getFileName().toString()
 
-// ===================== UNIT TESTS ============================
+    def filePattern = template.toString()
+    int p = filePattern.lastIndexOf('/')
+    if( p != -1 ) filePattern = filePattern.substring(p+1)
+    if( !filePattern.contains('*') && !filePattern.contains('?') ) 
+        filePattern = '*' + filePattern 
+  
+    def regex = filePattern
+                    .replace('.','\\.')
+                    .replace('*','(.*)')
+                    .replace('?','(.?)')
+                    .replace('{','(?:')
+                    .replace('}',')')
+                    .replace(',','|')
 
-
-def testTrimReadName() {
-    assert trimReadName('abc') == 'abc'
-    assert trimReadName('a_b_c__') == 'a_b_c'
-    assert trimReadName('__a_b_c__') == 'a_b_c'
+    def matcher = (fileName =~ /$regex/)
+    if( matcher.matches() ) {  
+        def end = matcher.end(matcher.groupCount() )      
+        def prefix = fileName.substring(0,end)
+        while(prefix.endsWith('-') || prefix.endsWith('_') || prefix.endsWith('.') ) 
+          prefix=prefix[0..-2]
+          
+        return prefix
+    }
+    
+    return fileName
 }
 
 

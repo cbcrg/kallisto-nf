@@ -38,27 +38,18 @@ Pipeline parameters
   `  $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa  `
     
   
-**--primary** 
+**--reads** 
    
-* Specifies the location of the primary reads *fastq* file(s).
+* Specifies the location of the reads *fastq* file(s).
 * Multiple files can be specified using the usual wildcards (*, ?), in this case make sure to surround the parameter string
   value by single quote characters (see the example below)
 * It must end in 'fastq'.
 * Involved in the task: kallisto-mapping.
   * By default is set to the Kallisto-NF's location: './tutorial/data/*.fastq' 
-  `  $ nextflow run cbcrg/kallisto-nf --primary '/home/dataset/*_1.fastq'`
+  `  $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*.fastq'`
+* Read pairs can be specified using the a glob file patter like the following: 
+  `  $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*_{1,2}.fastq'`    
   
-  
-**--secondary** 
-   
-* Specifies the location of the secondary reads *fastq* file if paired end data are used.
-* Multiple files can be specified using the usual wildcards (*, ?), in this case make sure to surround the parameter string
-   value by single quote characters (see the example below)
-* It must end in '_2.fastq'.  
-* Involved in the task: kallisto-mapping.  
-  * By default is set to the Kallisto-NF's location: './tutorial/data/test_2.fastq' 
-  `  $ nextflow run cbcrg/kallisto-nf --secondary '/home/dataset/*_2.fastq'`
-
 
 **--fragment_len**
 * Specifies the average fragment length of the RNA-Seq library.
