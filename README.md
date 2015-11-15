@@ -32,9 +32,10 @@ command line.
 * It should end in `.fa` 
 * Involved in the task: kallisto-index.
 * By default is set to the Kallisto-NF's localization: `./tutorial/data/transcriptome/trascriptome.fa`
-* Example: 
 
-    `$ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa  `
+Example: 
+
+    $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa 
     
   
 #### `--reads` 
@@ -45,13 +46,14 @@ command line.
 * It must end in `.fastq`.
 * Involved in the task: kallisto-mapping.
 * By default is set to the Kallisto-NF's location: `./tutorial/data/*.fastq`
-* Example: 
- 
-    `$ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*.fastq'`
 
-* Read pairs can be specified using the a glob file pattern. For example:
+Example: 
  
-    `$ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*_{1,2}.fastq'`    
+    $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*.fastq'
+
+Read pairs can be specified using the a glob file pattern. For example:
+ 
+    $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*_{1,2}.fastq'    
   
 
 #### `--fragment_len`
@@ -60,9 +62,10 @@ command line.
 * This is required for mapping single-ended reads.
 * Involved in the task: kallisto-mapping.
 * By default is set 180. 
-* Example: 
 
-    `$ nextflow run cbcrg/kallisto-nf --fragment_len 180`
+Example: 
+
+    $ nextflow run cbcrg/kallisto-nf --fragment_len 180
 
 
 #### `--fragment_sd`
@@ -71,9 +74,10 @@ command line.
 * This is required for mapping single-ended reads.
 * Involved in the task: kallisto-mapping.
 * By default this is set 20.  
-* Example: 
 
-    `$ nextflow run cbcrg/kallisto-nf --fragment_sd 180`
+Example: 
+
+    $ nextflow run cbcrg/kallisto-nf --fragment_sd 180
 
 
 #### `--bootstrap` 
@@ -81,29 +85,32 @@ command line.
 * Specifies the number of bootstrap samples for quantification of abundances.
 * Involved in the task: kallisto-mapping.
 * By default this is set 100. 
-* Example: 
 
-    `$ nextflow run cbcrg/kallisto-nf --bootstrap 100`
+Example: 
+
+    $ nextflow run cbcrg/kallisto-nf --bootstrap 100
 
 
 #### `--experiment`
 
 * Specifies the location of the experimental design file. 
 * The experimental design file provides Seulth with a link between the samples and the conditions for abundance testing. 
-* By default is set to the Kallisto-NF's location: './tutorial/experiment/high_seqinfo.txt'
-* Example: 
+* By default is set to the Kallisto-NF's location: `./tutorial/experiment/high_seqinfo.txt`
 
-    `$ nextflow run cbcrg/kallisto-nf --experiment '/home/experiment/exp_design.txt'`
+Example: 
+
+    $ nextflow run cbcrg/kallisto-nf --experiment '/home/experiment/exp_design.txt'
 
 
 #### `--output` 
    
 * Specifies the folder where the results will be stored for the user.  
 * It does not matter if the folder does not exist.
-* By default is set to Kallisto-NF's folder: './results' 
-* Example: 
+* By default is set to Kallisto-NF's folder: `./results` 
 
-    `$ nextflow run cbcrg/kallisto-nf --output /home/user/my_results  `
+Example: 
+
+    $ nextflow run cbcrg/kallisto-nf --output /home/user/my_results 
   
 
 
