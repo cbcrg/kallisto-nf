@@ -1,12 +1,9 @@
-Kallisto-NF
-========
+# Kallisto-NF
 
 A nextflow implementation of Kallisto & Sleuth RNA-Seq Tools
 
 
-
-Quick start 
------------
+## Quick start 
 
 Make sure you have all the required dependencies listed in the last section.
 
@@ -26,72 +23,91 @@ command line.
     
 
 
-Pipeline parameters
--------------------
+## Pipeline parameters
 
-**--transcriptome**  
+
+#### `--transcriptome`   
    
 * The location of the transcriptome multi-fasta file. 
-* It should end in '.fa' 
+* It should end in `.fa` 
 * Involved in the task: kallisto-index.
-  * By default is set to the Kallisto-NF's localization: './tutorial/data/transcriptome/trascriptome.fa'
-  `  $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa  `
+* By default is set to the Kallisto-NF's localization: `./tutorial/data/transcriptome/trascriptome.fa`
+* Example: 
+
+    `$ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa  `
     
   
-**--reads** 
+#### `--reads` 
    
 * Specifies the location of the reads *fastq* file(s).
 * Multiple files can be specified using the usual wildcards (*, ?), in this case make sure to surround the parameter string
   value by single quote characters (see the example below)
-* It must end in 'fastq'.
+* It must end in `.fastq`.
 * Involved in the task: kallisto-mapping.
-  * By default is set to the Kallisto-NF's location: './tutorial/data/*.fastq' 
-  `  $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*.fastq'`
-* Read pairs can be specified using the a glob file patter like the following: 
-  `  $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*_{1,2}.fastq'`    
+* By default is set to the Kallisto-NF's location: `./tutorial/data/*.fastq`
+* Example: 
+ 
+    `$ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*.fastq'`
+
+* Read pairs can be specified using the a glob file pattern. For example:
+ 
+    `$ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*_{1,2}.fastq'`    
   
 
-**--fragment_len**
+#### `--fragment_len`
+
 * Specifies the average fragment length of the RNA-Seq library.
 * This is required for mapping single-ended reads.
 * Involved in the task: kallisto-mapping.
-   * By default is set 180. 
-  `  $ nextflow run cbcrg/kallisto-nf --fragment_len 180`
+* By default is set 180. 
+* Example: 
+
+    `$ nextflow run cbcrg/kallisto-nf --fragment_len 180`
 
 
-**--fragment_sd**
+#### `--fragment_sd`
+
 * Specifies the standard deviation of the fragment length in the RNA-Seq library.
 * This is required for mapping single-ended reads.
 * Involved in the task: kallisto-mapping.
-   * By default this is set 20.  
-  `  $ nextflow run cbcrg/kallisto-nf --fragment_sd 180`
+* By default this is set 20.  
+* Example: 
+
+    `$ nextflow run cbcrg/kallisto-nf --fragment_sd 180`
 
 
-**--bootstrap**
+#### `--bootstrap` 
+
 * Specifies the number of bootstrap samples for quantification of abundances.
 * Involved in the task: kallisto-mapping.
-   * By default this is set 100. 
-  `  $ nextflow run cbcrg/kallisto-nf --bootstrap 100`
+* By default this is set 100. 
+* Example: 
+
+    `$ nextflow run cbcrg/kallisto-nf --bootstrap 100`
 
 
-**--experiment**
+#### `--experiment`
+
 * Specifies the location of the experimental design file. 
 * The experimental design file provides Seulth with a link between the samples and the conditions for abundance testing. 
-  * By default is set to the Kallisto-NF's location: './tutorial/experiment/high_seqinfo.txt'
-  `  $ nextflow run cbcrg/kallisto-nf --experiment '/home/experiment/exp_design.txt'`
+* By default is set to the Kallisto-NF's location: './tutorial/experiment/high_seqinfo.txt'
+* Example: 
+
+    `$ nextflow run cbcrg/kallisto-nf --experiment '/home/experiment/exp_design.txt'`
 
 
-**--output** 
+#### `--output` 
    
 * Specifies the folder where the results will be stored for the user.  
 * It does not matter if the folder does not exist.
-  * By default is set to Kallisto-NF's folder: './results' 
-  `  $ nextflow run cbcrg/kallisto-nf --output /home/user/my_results  `
+* By default is set to Kallisto-NF's folder: './results' 
+* Example: 
+
+    `$ nextflow run cbcrg/kallisto-nf --output /home/user/my_results  `
   
 
 
-Cluster support
----------------
+## Cluster support
 
 Kallisto-NF execution relies on [Nextflow](http://www.nextflow.io) framework which provides an 
 abstraction between the pipeline functional logic and the underlying processing system.
@@ -99,7 +115,7 @@ abstraction between the pipeline functional logic and the underlying processing 
 Thus it is possible to execute it on your computer or any cluster resource
 manager without modifying it.
 
-Currently the following clusters are supported:
+Currently the following platforms are supported:
 
   + Oracle/Univa/Open Grid Engine (SGE)
   + Platform LSF
@@ -123,8 +139,8 @@ synchronisation, file(s) staging/un-staging, etc.
 
 Alternatively the same declaration can be defined in the file `$HOME/.nextflow/config`.
 
-To lean more about the avaible settings and the configuration file read the Nextflow documentation 
- http://www.nextflow.io/docs/latest/config.html
+To lean more about the avaible settings and the configuration file read the 
+[Nextflow documentation](http://www.nextflow.io/docs/latest/config.html).
   
   
 Dependencies 
