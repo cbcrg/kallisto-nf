@@ -25,19 +25,6 @@ command line.
 
 ## Pipeline parameters
 
-
-#### `--transcriptome`   
-   
-* The location of the transcriptome multi-fasta file. 
-* It should end in `.fa` 
-* Involved in the task: kallisto-index.
-* By default is set to the Kallisto-NF's localization: `./tutorial/data/transcriptome/trascriptome.fa`
-
-Example: 
-
-    $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa 
-    
-  
 #### `--reads` 
    
 * Specifies the location of the reads *fastq* file(s).
@@ -48,13 +35,55 @@ Example:
 * By default is set to the Kallisto-NF's location: `./tutorial/data/*.fastq`
 
 Example: 
- 
+
     $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*.fastq'
 
-Read pairs can be specified using the a glob file pattern. For example:
- 
-    $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/*_{1,2}.fastq'    
+This will handle each fastq file as a seperate sample.
+
+Read pairs of samples can be specified using the glob file pattern. For example, given a more more complex situation where there was three samples (A, B and C), with A and B being paired reads and C being single ended. Our read files could be:
+* sample_A_1.fastq
+* sample_A_2.fastq
+* sample_B_1.fastq
+* sample_B_2.fastq 
+* sample_C_1.fastq
+
+The reads may be specified as below:
+
+    $ nextflow run cbcrg/kallisto-nf --reads '/home/dataset/sample_*_{1,2}.fastq'    
+
   
+#### `--transcriptome`
+
+* The location of the transcriptome multi-fasta file.
+* It should end in `.fa`
+* Involved in the task: kallisto-index.
+* By default is set to the Kallisto-NF's localization: `./tutorial/data/transcriptome/trascriptome.fa`
+
+Example:
+
+    $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa
+
+
+#### `--experiment`
+
+* Specifies the location of the experimental design file.
+* The experimental design file provides Seulth with a loink between the samples, conditions and replicates for abundance testing. 
+* By default is set to the Kallisto-NF's location: `./tutorial/experiment/high_seqinfo.txt`
+
+Example: 
+
+    $ nextflow run cbcrg/kallisto-nf --experiment '/home/experiment/exp_design.txt'
+
+The experiment file should be a text file, space delimited, in a format similar to as shown below:
+
+    run_accession condition sample
+    SRR493366 control A
+    SRR493367 control B
+    SRR493368 control C
+    SRR493369 HOXA1KD A
+    SRR493370 HOXA1KD B
+    SRR493371 HOXA1KD C
+
 
 #### `--fragment_len`
 
@@ -89,17 +118,6 @@ Example:
 Example: 
 
     $ nextflow run cbcrg/kallisto-nf --bootstrap 100
-
-
-#### `--experiment`
-
-* Specifies the location of the experimental design file. 
-* The experimental design file provides Seulth with a link between the samples and the conditions for abundance testing. 
-* By default is set to the Kallisto-NF's location: `./tutorial/experiment/high_seqinfo.txt`
-
-Example: 
-
-    $ nextflow run cbcrg/kallisto-nf --experiment '/home/experiment/exp_design.txt'
 
 
 #### `--output` 
@@ -157,4 +175,4 @@ Dependencies
  * Kallisto - http://pachterlab.github.io/kallisto/
  * Sleuth - http://pachterlab.github.io/sleuth/
  * R - https://www.r-project.org/
- 
+ * RStudio - https://www.rstudio.com/ 
