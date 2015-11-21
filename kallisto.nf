@@ -125,7 +125,7 @@ process mapping {
     }  
     else {
         """
-        kallisto quant -i transcriptome.index -o kallisto_${name} ${reads} 
+        kallisto quant -t 8 -b ${params.bootstrap} -i transcriptome.index -o kallisto_${name} ${reads} 
         """
     }
 
