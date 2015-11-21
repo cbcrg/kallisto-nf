@@ -32,7 +32,7 @@ command line.
   value by single quote characters (see the example below)
 * It must end in `.fastq`.
 * Involved in the task: kallisto-mapping.
-* By default is set to the Kallisto-NF's location: `./tutorial/data/*.fastq`
+* By default it is set to the Kallisto-NF's location: `./tutorial/data/*.fastq`
 
 Example: 
 
@@ -40,7 +40,7 @@ Example:
 
 This will handle each fastq file as a seperate sample.
 
-Read pairs of samples can be specified using the glob file pattern. For example, given a more more complex situation where there was three samples (A, B and C), with A and B being paired reads and C being single ended. Our read files could be:
+Read pairs of samples can be specified using the glob file pattern. Consider a more complex situation where there are three samples (A, B and C), with A and B being paired reads and C being single ended. The read files could be:
 * sample_A_1.fastq
 * sample_A_2.fastq
 * sample_B_1.fastq
@@ -57,7 +57,7 @@ The reads may be specified as below:
 * The location of the transcriptome multi-fasta file.
 * It should end in `.fa`
 * Involved in the task: kallisto-index.
-* By default is set to the Kallisto-NF's localization: `./tutorial/data/transcriptome/trascriptome.fa`
+* By default it is set to the Kallisto-NF's localization: `./tutorial/data/transcriptome/trascriptome.fa`
 
 Example:
 
@@ -67,8 +67,8 @@ Example:
 #### `--experiment`
 
 * Specifies the location of the experimental design file.
-* The experimental design file provides Seulth with a loink between the samples, conditions and replicates for abundance testing. 
-* By default is set to the Kallisto-NF's location: `./tutorial/experiment/high_seqinfo.txt`
+* The experimental design file provides Seulth with a link between the samples, conditions and replicates for abundance testing. 
+* By default it is set to the Kallisto-NF's location: `./tutorial/experiment/high_seqinfo.txt`
 
 Example: 
 
