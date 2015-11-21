@@ -41,11 +41,12 @@ Example:
 This will handle each fastq file as a seperate sample.
 
 Read pairs of samples can be specified using the glob file pattern. Consider a more complex situation where there are three samples (A, B and C), with A and B being paired reads and C being single ended. The read files could be:
-* sample_A_1.fastq
-* sample_A_2.fastq
-* sample_B_1.fastq
-* sample_B_2.fastq 
-* sample_C_1.fastq
+    
+    sample_A_1.fastq
+    sample_A_2.fastq
+    sample_B_1.fastq
+    sample_B_2.fastq 
+    sample_C_1.fastq
 
 The reads may be specified as below:
 
