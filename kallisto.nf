@@ -118,14 +118,17 @@ process mapping {
     //
     // Kallisto tools mapper
     //
-    if( single ) {
+
+    if( reads instanceof List ) {
         """
-        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -t 8 -i ${transcriptome_index} -o kallisto_${name} ${reads} 
+        mkdir kallisto_${name}
+        kallisto quant -b ${params.bootstrap} -i transcriptome.index -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam 
         """
     }  
     else {
         """
-        kallisto quant -t 8 -b ${params.bootstrap} -i transcriptome.index -o kallisto_${name} ${reads} 
+        mkdir kallisto_${name}
+        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam
         """
     }
 
