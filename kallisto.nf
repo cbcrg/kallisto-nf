@@ -118,8 +118,7 @@ process mapping {
     //
     // Kallisto tools mapper
     //
-
-    if( reads instanceof List ) {
+    if( reads instanceof nextflow.util.BlankSeparatedList) {
         """
         mkdir kallisto_${name}
         kallisto quant -b ${params.bootstrap} -i transcriptome.index -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam 
