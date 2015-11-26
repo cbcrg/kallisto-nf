@@ -139,7 +139,7 @@ process sleuth {
  
     input:
     file all_files from kallisto_out.toList()
-    file 'hiseq_info.txt' from exp_file
+    file exp_file
 
     output: 
     file 'sleuth_object.so'
@@ -152,7 +152,7 @@ process sleuth {
     """
     mkdir kallisto
     mv $all_files kallisto 
-    sleuth.R kallisto hiseq_info.txt
+    sleuth.R kallisto ${exp_file}
     """
 }
 
