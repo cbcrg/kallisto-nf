@@ -138,7 +138,7 @@ process sleuth {
     publishDir result_path
  
     input:
-    file all_files from kallisto_out.toList()
+    file 'kallisto/*' from kallisto_out.toList()
     file exp_file
 
     output: 
@@ -150,8 +150,6 @@ process sleuth {
     //
  
     """
-    mkdir kallisto
-    mv $all_files kallisto 
     sleuth.R kallisto ${exp_file}
     """
 }
