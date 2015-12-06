@@ -78,10 +78,6 @@ Channel
        tuple(prefix, path) 
     }
     .groupTuple(sort: true)
-    .map { id, files -> 
-        single = files.size()==1
-        tuple(id, files)
-    }
     .set { read_files } 
 
 
@@ -118,7 +114,8 @@ process mapping {
     //
     // Kallisto tools mapper
     //
-    if( reads instanceof nextflow.util.BlankSeparatedList) {
+    def single = reads instanceof Path
+    if( !single ) {
         """
         mkdir kallisto_${name}
         kallisto quant -b ${params.bootstrap} -i transcriptome.index -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam 
