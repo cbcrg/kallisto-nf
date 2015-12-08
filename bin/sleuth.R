@@ -21,7 +21,7 @@ t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id, ens_gene = ensembl_
 so <- sleuth_prep(s2c, ~ condition, target_mapping = t2g)
 so <- sleuth_fit(so)
 
-so <- sleuth_wt(so, 'conditionHOXA1KD')
+so <- sleuth_wt(so, 'conditioncontrol')
 
 save(so, file="sleuth_object.so")
 
