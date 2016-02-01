@@ -32,6 +32,7 @@ params.reads         = "$baseDir/tutorial/reads/*.fastq"
 params.fragment_len  = '180'
 params.fragment_sd   = '20'
 params.bootstrap     = '100'
+params.threads       = '1'
 params.experiment    = "$baseDir/tutorial/experiment/hiseq_info.txt"
 params.output        = "results/"
 
@@ -44,6 +45,7 @@ log.info "transcriptome          : ${params.transcriptome}"
 log.info "fragment length        : ${params.fragment_len} nt"
 log.info "fragment SD            : ${params.fragment_sd} nt"
 log.info "bootstraps             : ${params.bootstrap}"
+log.info "threads                : ${params.threads}"
 log.info "experimental design    : ${params.experiment}"
 log.info "output                 : ${params.output}"
 log.info "\n"
@@ -118,13 +120,13 @@ process mapping {
     if( !single ) {
         """
         mkdir kallisto_${name}
-        kallisto quant -b ${params.bootstrap} -i transcriptome.index -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam 
+        kallisto quant -b ${params.bootstrap} -i transcriptome.index -t ${params.threads} -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam 
         """
     }  
     else {
         """
         mkdir kallisto_${name}
-        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam
+        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -t ${params.threads} -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam
         """
     }
 
