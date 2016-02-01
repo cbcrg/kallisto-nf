@@ -86,7 +86,7 @@ Channel
 process index {
 
     input:
-    file transcriptome_file
+    file transcriptome_file, mode: 'copy', overwrite: 'true'
     
     output:
     file "transcriptome.index" into transcriptome_index
@@ -103,7 +103,7 @@ process index {
 
 process mapping {
     tag "reads: $name"
-    publishDir result_path
+    publishDir result_path, mode: 'copy', overwrite: 'true'
 
     input:
     file transcriptome_index from transcriptome_index.first()
@@ -120,13 +120,13 @@ process mapping {
     if( !single ) {
         """
         mkdir kallisto_${name}
-        kallisto quant -b ${params.bootstrap} -i transcriptome.index -t ${params.threads} -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam 
+        kallisto quant -b ${params.bootstrap} -i transcriptome.index -t ${params.threads} -o kallisto_${name} ${reads}
         """
     }  
     else {
         """
         mkdir kallisto_${name}
-        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -t ${params.threads} -o kallisto_${name} --pseudobam ${reads} > kallisto_${name}/${name}.sam
+        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -t ${params.threads} -o kallisto_${name} ${reads}
         """
     }
 
@@ -134,7 +134,7 @@ process mapping {
 
 
 process sleuth {
-    publishDir result_path
+    publishDir result_path, mode: 'copy', overwrite: 'true'
  
     input:
     file 'kallisto/*' from kallisto_out.toList()
