@@ -23,5 +23,9 @@ so <- sleuth_fit(so)
 
 so <- sleuth_wt(so, 'conditionHOXA1KD')
 
+gene_table <- sleuth_gene_table(so, test = "conditionHOXA1KD", test_type = "wt")
+
+write.table(gene_table, "gene_table_results.txt", sep="\t")
+
 save(so, file="sleuth_object.so")
 
