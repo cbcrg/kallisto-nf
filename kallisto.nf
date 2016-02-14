@@ -47,7 +47,7 @@ log.info "fragment SD            : ${params.fragment_sd} nt"
 log.info "bootstraps             : ${params.bootstrap}"
 log.info "threads                : ${params.threads}"
 log.info "experimental design    : ${params.experiment}"
-log.info "output                 : ${params.output}"
+log.info "output                 : ${params.eutput}"
 log.info "\n"
 
 
@@ -57,7 +57,6 @@ log.info "\n"
 
 transcriptome_file     = file(params.transcriptome)
 exp_file               = file(params.experiment) 
-result_path            = file(params.output)
 
 /*
  * validate input files
@@ -70,8 +69,6 @@ if( !exp_file.exists() ) exit 1, "Missing experimental design file: ${exp_file}"
  * Create a channel for read files 
  */
  
-single = null   
-
 Channel
     .fromPath( params.reads )
     .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
@@ -84,9 +81,8 @@ Channel
 
 
 process index {
-
     input:
-    file transcriptome_file, mode: 'copy', overwrite: 'true'
+    file transcriptome_file
     
     output:
     file "transcriptome.index" into transcriptome_index
@@ -103,7 +99,6 @@ process index {
 
 process mapping {
     tag "reads: $name"
-    publishDir result_path, mode: 'copy', overwrite: 'true'
 
     input:
     file transcriptome_index from transcriptome_index.first()
@@ -134,8 +129,6 @@ process mapping {
 
 
 process sleuth {
-    publishDir result_path, mode: 'copy', overwrite: 'true'
- 
     input:
     file 'kallisto/*' from kallisto_out.toList()
     file exp_file
