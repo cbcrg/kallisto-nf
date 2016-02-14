@@ -1,6 +1,8 @@
 # Kallisto-NF
 
-A nextflow implementation of Kallisto & Sleuth RNA-Seq Tools
+A Nextflow implementation of Kallisto & Sleuth RNA-Seq Tools
+
+![CircleCI status](https://circleci.com/gh/cbcrg/kallisto-nf.png?style=shield)
 
 
 ## Quick start 
