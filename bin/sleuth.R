@@ -1,9 +1,9 @@
-#!/usr/bin/env Rscript
+#!/users/cn/efloden/software/R-3.2.2/bin/Rscript
 library("sleuth")
 
 args <- commandArgs(TRUE)
 
-sample_id <- dir(args[1])
+sample_id <- dir(pattern="kallisto_*", args[1])
 sample_id
 
 kal_dirs <- sapply(sample_id, function(id) file.path(args[1], id))

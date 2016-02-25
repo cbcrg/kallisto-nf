@@ -105,7 +105,8 @@ process mapping {
     set val(name), file(reads:'*') from read_files
 
     output:
-    file "kallisto_${name}" into kallisto_out  
+    file "kallisto_${name}" into kallisto_out_dirs 
+    val(name) into kallisto_out_names
 
     script:
     //
@@ -130,7 +131,7 @@ process mapping {
 
 process sleuth {
     input:
-    file 'kallisto/*' from kallisto_out.toList()
+    file kallisto_dir from kallisto_out_dirs.toSortedList()   
     file exp_file
 
     output: 
@@ -143,7 +144,7 @@ process sleuth {
     //
  
     """
-    sleuth.R kallisto ${exp_file}
+    sleuth.R . ${exp_file}
     """
 }
 
