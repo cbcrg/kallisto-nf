@@ -106,7 +106,6 @@ process mapping {
 
     output:
     file "kallisto_${name}" into kallisto_out_dirs 
-    val(name) into kallisto_out_names
 
     script:
     //
