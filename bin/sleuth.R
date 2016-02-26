@@ -1,4 +1,4 @@
-#!/users/cn/efloden/software/R-3.2.2/bin/Rscript
+#!/usr/bin/env Rscript
 library("sleuth")
 
 args <- commandArgs(TRUE)
