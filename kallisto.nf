@@ -92,7 +92,7 @@ process index {
     // Kallisto tools mapper index
     //
     """
-    kallisto index -i transcriptome.index ${transcriptome_file}
+    kallisto_linux-v0.42.4.bin index -i transcriptome.index ${transcriptome_file}
     """
 }
 
@@ -115,13 +115,13 @@ process mapping {
     if( !single ) {
         """
         mkdir kallisto_${name}
-        kallisto quant -b ${params.bootstrap} -i transcriptome.index -t ${params.threads} -o kallisto_${name} ${reads}
+        kallisto_linux-v0.42.4.bin quant -b ${params.bootstrap} -i transcriptome.index -t ${params.threads} -o kallisto_${name} ${reads}
         """
     }  
     else {
         """
         mkdir kallisto_${name}
-        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -t ${params.threads} -o kallisto_${name} ${reads}
+        kallisto_linux-v0.42.4.bin quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -t ${params.threads} -o kallisto_${name} ${reads}
         """
     }
 
@@ -130,7 +130,7 @@ process mapping {
 
 process sleuth {
     input:
-    file kallisto_dir from kallisto_out_dirs.toSortedList()   
+    file 'kallisto/*' from kallisto_out_dirs.toSortedList()   
     file exp_file
 
     output: 
@@ -143,7 +143,7 @@ process sleuth {
     //
  
     """
-    sleuth.R . ${exp_file}
+    sleuth.R kallisto ${exp_file}
     """
 }
 
