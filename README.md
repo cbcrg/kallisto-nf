@@ -64,7 +64,7 @@ The reads may be specified as below:
 
 Example:
 
-    $ nextflow run cbcrg/transcriptome-nf --transcriptome /home/user/my_transcriptome/example.fa
+    $ nextflow run cbcrg/kallisto-nf --transcriptome /home/user/my_transcriptome/example.fa
 
 
 #### `--experiment`
