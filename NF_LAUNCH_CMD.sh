@@ -1,1 +1,0 @@
-nextflow run kallisto.nf --reads='../data/raw_reads/SRR4933*_{1,2}.fastq' --transcriptome='../data/transcriptome/Homo_sapiens.GRCh38.rel79.cdna.all.fa' --experiment='../data/experiment/hiseq_info.txt' --bootstraps 100 --output='kallisto-nf-local1' -with-docker
