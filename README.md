@@ -3,7 +3,7 @@
 A Nextflow implementation of Kallisto & Sleuth RNA-Seq Tools
 
 ![CircleCI status](https://circleci.com/gh/cbcrg/kallisto-nf.png?style=shield)
-[![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.17.3-brightgreen.svg)](http://nextflow.io)
+[![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.17.4-brightgreen.svg)](http://nextflow.io)
 
 ## Quick start 
 
@@ -186,7 +186,7 @@ Dependencies
 ------------
 
  * Java 7+ 
- * Nextflow (0.16.4 or higher)
+ * Nextflow (0.17.4 or higher)
  * Kallisto - http://pachterlab.github.io/kallisto/
  * Sleuth - http://pachterlab.github.io/sleuth/
  * R - https://www.r-project.org/
