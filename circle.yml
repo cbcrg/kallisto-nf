@@ -7,6 +7,6 @@ machine:
 test:
   override:
     - curl -fsSL get.nextflow.io | bash
-    - ./nextflow run . -with-docker
+    - ./nextflow run . -with-docker :
       timeout: 1200
 
