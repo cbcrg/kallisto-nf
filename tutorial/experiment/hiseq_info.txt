@@ -1,7 +1,7 @@
 run_accession condition sample
-SRR493366 control A
-SRR493367 control B
-SRR493368 control C
+SRR493366 scramble A
+SRR493367 scramble B
+SRR493368 scramble C
 SRR493369 HOXA1KD A
 SRR493370 HOXA1KD B
 SRR493371 HOXA1KD C
