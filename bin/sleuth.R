@@ -24,9 +24,9 @@ t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id, ens_gene = ensembl_
 so <- sleuth_prep(s2c, ~ condition, target_mapping = t2g)
 so <- sleuth_fit(so)
 
-so <- sleuth_wt(so, 'conditionHOXA1KD')
+so <- sleuth_wt(so, 'conditionscramble')
 
-gene_table <- sleuth_gene_table(so, test = "conditionHOXA1KD", test_type = "wt")
+gene_table <- sleuth_gene_table(so, test = "conditionscramble", test_type = "wt")
 
 write.table(gene_table, paste("gene_table_results.txt"), sep="\t")
 
