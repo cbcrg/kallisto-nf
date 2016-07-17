@@ -123,17 +123,6 @@ Example:
     $ nextflow run cbcrg/kallisto-nf --bootstrap 100
 
 
-#### `--threads` 
-
-* Specifies the number of threads used in generating bootstraps for quantification of abundances.
-* Involved in the task: kallisto-mapping.
-* By default this is set 1. 
-
-Example: 
-
-    $ nextflow run cbcrg/kallisto-nf --threads 1
-
-
 #### `--output` 
    
 * Specifies the folder where the results will be stored for the user.  
