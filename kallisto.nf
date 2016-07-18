@@ -133,7 +133,6 @@ process sleuth {
 
     output: 
     file 'sleuth_object.so'
-    file 'gene_table_results.txt'
 
     script:
     //
