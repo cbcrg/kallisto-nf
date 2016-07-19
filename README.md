@@ -175,8 +175,8 @@ Dependencies
 ------------
 
  * Java 7+ 
- * Nextflow (0.18.0 or higher)
  * Kallisto - http://pachterlab.github.io/kallisto/
  * Sleuth - http://pachterlab.github.io/sleuth/
  * R - https://www.r-project.org/
  * RStudio - https://www.rstudio.com/ 
+ * Nextflow (0.20.0 or higher)

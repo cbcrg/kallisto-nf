@@ -68,13 +68,8 @@ if( !exp_file.exists() ) exit 1, "Missing experimental design file: ${exp_file}"
  */
  
 Channel
-    .fromPath( params.reads )
+    .fromFilePairs( params.reads, size: -1 )
     .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
-    .map { path -> 
-       def prefix = readPrefix(path, params.reads)
-       tuple(prefix, path) 
-    }
-    .groupTuple(sort: true)
     .set { read_files } 
 
 
@@ -100,7 +95,7 @@ process mapping {
 
     input:
     file transcriptome_index from transcriptome_index.first()
-    set val(name), file(reads:'*') from read_files
+    set val(name), file(reads) from read_files
 
     output:
     file "kallisto_${name}" into kallisto_out_dirs 
@@ -144,51 +139,5 @@ process sleuth {
     """
 }
 
-
-// ===================== UTILITY FUNCTIONS ============================
-
-
-/* 
- * Helper function, given a file Path 
- * returns the file name region matching a specified glob pattern
- * starting from the beginning of the name up to last matching group.
- * 
- * For example: 
- *   readPrefix('/some/data/file_alpha_1.fa', 'file*_1.fa' )
- * 
- * Returns: 
- *   'file_alpha'
- */
- 
-def readPrefix( Path actual, template ) {
-
-    final fileName = actual.getFileName().toString()
-
-    def filePattern = template.toString()
-    int p = filePattern.lastIndexOf('/')
-    if( p != -1 ) filePattern = filePattern.substring(p+1)
-    if( !filePattern.contains('*') && !filePattern.contains('?') ) 
-        filePattern = '*' + filePattern 
-  
-    def regex = filePattern
-                    .replace('.','\\.')
-                    .replace('*','(.*)')
-                    .replace('?','(.?)')
-                    .replace('{','(?:')
-                    .replace('}',')')
-                    .replace(',','|')
-
-    def matcher = (fileName =~ /$regex/)
-    if( matcher.matches() ) {  
-        def end = matcher.end(matcher.groupCount() )      
-        def prefix = fileName.substring(0,end)
-        while(prefix.endsWith('-') || prefix.endsWith('_') || prefix.endsWith('.') ) 
-          prefix=prefix[0..-2]
-          
-        return prefix
-    }
-    
-    return fileName
-}
 
 
