@@ -174,9 +174,5 @@ To lean more about the avaible settings and the configuration file read the
 Dependencies 
 ------------
 
- * Java 7+ 
- * Kallisto - http://pachterlab.github.io/kallisto/
- * Sleuth - http://pachterlab.github.io/sleuth/
- * R - https://www.r-project.org/
- * RStudio - https://www.rstudio.com/ 
- * Nextflow (0.20.0 or higher)
+ * [Nextflow](http://nextflow.io) (0.20.0 or higher)
+ * [Docker](https://docker.com) (alternatively you will need to install the software packages listed [here](Dockerfile))  
