@@ -36,7 +36,7 @@ params.experiment    = "$baseDir/tutorial/experiment/hiseq_info.txt"
 params.output        = "results/"
 
 
-log.info "K A L L I S T O - N F  ~  version 0.3"
+log.info "K A L L I S T O - N F  ~  version 0.9"
 log.info "====================================="
 log.info "name                   : ${params.name}"
 log.info "reads                  : ${params.reads}"
