@@ -16,7 +16,7 @@ s2c <- s2c[order(s2c$condition), ]
 
 print(s2c)
 
-ensembl <- biomaRt::useEnsembl(biomart="ensembl", dataset = "hsapiens_gene_ensembl", version=79)
+ensembl <- biomaRt::useEnsembl(biomart="ensembl", dataset = "hsapiens_gene_ensembl", version=79, GRCh=38)
 
 t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id", "external_gene_name"), mart = ensembl)
 t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id, ens_gene = ensembl_gene_id, ext_gene = external_gene_name)
