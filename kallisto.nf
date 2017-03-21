@@ -94,7 +94,7 @@ process mapping {
     tag "reads: $name"
 
     input:
-    file transcriptome_index from transcriptome_index.first()
+    file index from transcriptome_index
     set val(name), file(reads) from read_files
 
     output:
@@ -114,7 +114,7 @@ process mapping {
     else {
         """
         mkdir kallisto_${name}
-        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${transcriptome_index} -t ${task.cpus} -o kallisto_${name} ${reads}
+        kallisto quant --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} -i ${index} -t ${task.cpus} -o kallisto_${name} ${reads}
         """
     }
 
@@ -123,7 +123,7 @@ process mapping {
 
 process sleuth {
     input:
-    file 'kallisto/*' from kallisto_out_dirs.toSortedList()   
+    file 'kallisto/*' from kallisto_out_dirs.collect()   
     file exp_file
 
     output: 
