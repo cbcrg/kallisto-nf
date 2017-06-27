@@ -174,5 +174,5 @@ To lean more about the avaible settings and the configuration file read the
 Dependencies 
 ------------
 
- * [Nextflow](http://nextflow.io) (0.20.0 or higher)
+ * [Nextflow](http://nextflow.io) (0.24.0 or higher)
  * [Docker](https://docker.com) (alternatively you will need to install the software packages listed [here](Dockerfile))  
