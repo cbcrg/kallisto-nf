@@ -108,7 +108,7 @@ process mapping {
     if( !single ) {
         """
         mkdir kallisto_${name}
-        kallisto quant -b ${params.bootstrap} -i transcriptome.index -t ${task.cpus} -o kallisto_${name} ${reads}
+        kallisto quant -b ${params.bootstrap} -i ${index} -t ${task.cpus} -o kallisto_${name} ${reads}
         """
     }  
     else {
