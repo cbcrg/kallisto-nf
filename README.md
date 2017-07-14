@@ -161,7 +161,7 @@ where the pipeline is going to be launched, with the following content:
       queue='<your queue name>'
     }
 
-In doing that, tasks will be executed through the `qsub` SGE command, and so your pipeline will behave like any
+When doing that, tasks will be executed through the `qsub` SGE command, and so your pipeline will behave like any
 other SGE job script, with the benefit that *Nextflow* will automatically and transparently manage the tasks
 synchronisation, file(s) staging/un-staging, etc.
 
