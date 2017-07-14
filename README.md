@@ -151,7 +151,7 @@ Currently the following platforms are supported:
   + PBS/Torque
 
 
-By default the pipeline is parallelized by spanning multiple threads in the machine where the script is launched.
+By default the pipeline is parallelized by spawning multiple threads in the machine where the script is launched.
 
 To submit the execution to a SGE cluster create a file named `nextflow.config`, in the directory
 where the pipeline is going to be launched, with the following content:
