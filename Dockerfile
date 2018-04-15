@@ -48,9 +48,9 @@ RUN R -e 'source("http://bioconductor.org/biocLite.R"); library(BiocInstaller); 
 #
 # Install Kallisto
 # 
-RUN wget -q https://github.com/pachterlab/kallisto/archive/v0.42.4.zip && \
-    unzip v0.42.4.zip && \
-    mkdir kallisto-0.42.4/build && \
+RUN wget -q https://github.com/pachterlab/kallisto/archive/v0.44.0.zip && \
+    unzip v0.44.0.zip && \
+    mkdir kallisto-0.44.0/build && \
     cd kallisto-*/build && \
     cmake .. && \
 	make && \
