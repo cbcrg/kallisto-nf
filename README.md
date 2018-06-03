@@ -2,8 +2,8 @@
 
 A Nextflow implementation of Kallisto & Sleuth RNA-Seq Tools
 
-![CircleCI status](https://circleci.com/gh/cbcrg/kallisto-nf.png?style=shield)
 [![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.24.0-brightgreen.svg)](http://nextflow.io)
+[![Build Status](https://travis-ci.org/cbcrg/kallisto-nf.svg?branch=master)](https://travis-ci.org/cbcrg/kallisto-nf)
 
 ## Quick start 
 
