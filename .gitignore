@@ -2,5 +2,4 @@ data/
 results/
 tutorial/
 work/
-.nextflow.log*
-.nextflow.history
+.nextflow*
