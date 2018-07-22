@@ -1,5 +1,7 @@
 # Kallisto-NF
 
+[![Join the chat at https://gitter.im/cbcrg/kallisto-nf](https://badges.gitter.im/cbcrg/kallisto-nf.svg)](https://gitter.im/cbcrg/kallisto-nf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A Nextflow implementation of Kallisto & Sleuth RNA-Seq Tools
 
 [![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.24.0-brightgreen.svg)](http://nextflow.io)
